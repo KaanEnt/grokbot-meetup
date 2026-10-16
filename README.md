@@ -5,6 +5,7 @@ A shareable Grok Bot skill that writes one person's LinkedIn post about the Grok
 ## Files
 
 - `SKILL.md`: the skill. Drop it into a Grok Bot's skills/workflows folder.
+- `luma-event.py`: reads the public Luma event page (no sign-in, stdlib only) and prints clean JSON: name, times, venue, description, hosts with their links, cover URL. `python3 luma-event.py https://luma.com/phs5tofz`
 - `make-card.py`: builds the 1254x1568 post card (event cover + avatar, name, one line).
 - `make-preview.py`: renders the post as it would look in the LinkedIn feed.
 - `assets/`: `event-cover.png`, Inter Regular/SemiBold fonts and their license (`Inter-OFL.txt`, SIL Open Font License 1.1).

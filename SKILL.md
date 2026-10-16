@@ -31,13 +31,31 @@ A copy of this Bot starts on a computer that has none of the files below. Before
 ```
 B=https://raw.githubusercontent.com/KaanEnt/grokbot-meetup/main
 mkdir -p ~/grokbot-meetup/assets && cd ~/grokbot-meetup
-for f in SKILL.md make-card.py make-preview.py assets/event-cover.png assets/Inter-Regular.ttf assets/Inter-SemiBold.ttf assets/Inter-OFL.txt; do
+for f in SKILL.md luma-event.py make-card.py make-preview.py assets/event-cover.png assets/Inter-Regular.ttf assets/Inter-SemiBold.ttf assets/Inter-OFL.txt; do
   curl -fsSL -o "$f" "$B/$f"
 done
 python3 -c "import PIL" 2>/dev/null || pip install pillow
 ```
 
 (`git clone https://github.com/KaanEnt/grokbot-meetup ~/grokbot-meetup` does the same.) The current version of this skill is always at https://raw.githubusercontent.com/KaanEnt/grokbot-meetup/main/SKILL.md. The scripts find their fonts and cover relative to their own folder, so run them from `~/grokbot-meetup/` or from this skill's folder when the files are already there.
+
+## Step 0: read the event page
+
+Before anything else, read the live Luma page. No sign-in needed:
+
+```
+python3 luma-event.py https://luma.com/phs5tofz > event.json
+```
+
+It prints `name`, `start`, `end` (UTC), `timezone`, `venue`, `address`, `description` (the page text, agenda included), `hosts` (`name`, `linkedin`, `x`, `website`, `luma`) and `cover_url`. It reads Luma's public API (`https://api.lu.ma/url?url=<slug>`) and falls back to the JSON embedded in the event page.
+
+1. The live Luma data overrides the Event block above wherever they differ: time, venue, hosts, agenda, talks. The Event block stays as the fallback when the script fails or a field is empty; then carry on with it and say nothing.
+2. If the person's name matches a host (ignore emoji and case), write the post as a host: what they are running or showing at the event, an invite to the room, and still their own personal take. Never a generic announcement, never the event's own copy.
+3. A matched host's own Luma links (LinkedIn, X, website) are identity sources for that person in Step 1 and Step 2, and go in the sources line.
+4. The hook comes from the Luma agenda and any talks listed in `description`. Never invent a talk, speaker, timing or detail that is not on the page or in the Event block.
+5. If `assets/event-cover.png` is missing, download `cover_url` and use it as the cover for the card.
+
+Every other rule still holds: no mention of X in the post, no hashtags, no em dashes, no invented facts, and the guest lookup in Step 1 runs as before.
 
 ## Step 1: work out who this is
 
@@ -48,7 +66,7 @@ GET https://uxpxjkgvlekllavmsbgj.supabase.co/functions/v1/meetup-guest?email=<re
 GET https://uxpxjkgvlekllavmsbgj.supabase.co/functions/v1/meetup-guest?name=<full name>
 ```
 
-1. Find the person's Luma registration email on the account (profile, connected GitHub or X, a signed-in session) if it is visible. If not, ask once, in one short message: "What email or full name did you register for the meetup with?" That is the only question allowed before research.
+1. Find the person's Luma registration email and X handle on the account (profile, connected GitHub or X, a signed-in session, a Luma host entry from Step 0) if they are visible. If either is missing, ask once, up front, in one short message: "What email did you register for the meetup with, and what's your X handle?" (a full name is fine if they don't remember the email). That one message is the only question; do not ask anything else before or after research unless a fact that blocks the post is still missing.
 2. Call the lookup with `email=` first (case-insensitive exact match); use `name=` with the full name only when that is all you have. The answer is `{"match":true,"position":"...","linkedin":"..."}` or `{"match":false}`. `"reason":"ambiguous, use email"` means several guests share that name: ask for the email instead. Never guess between people and never paste the raw JSON back.
 3. On a match these are primary facts: `position` (how they described themselves at registration: Student, Founder, Developer/Engineer, and so on) and the `linkedin` URL, which goes in the sources. With the URL, read their public LinkedIn profile through web fetch or web search (the public page, or a search result for that URL): profile photo, headline or bio, and current role and company. Use the headline and current role as who they are, and let them shape the hook and the lens. Only use what is reachable without signing in. Never sign in to LinkedIn, never drive a signed-in LinkedIn session for this, and drop it quietly if the page is blocked.
 4. If the public profile photo URL can be downloaded, save it to a file and use it as the card and preview avatar in Step 4. Otherwise fall back to the GitHub avatar, then the X profile image.
