@@ -91,7 +91,7 @@ def build(cover_path: Path, avatar_path: Path, name: str, line: str, out_path: P
 def main() -> None:
     parser = argparse.ArgumentParser(description="Build the event post card.")
     parser.add_argument("--cover", default=str(HERE / "assets" / "event-cover.png"))
-    parser.add_argument("--avatar", required=True, help="the person's picture (GitHub avatar or X profile image)")
+    parser.add_argument("--avatar", required=True, help="the person's picture (LinkedIn photo, GitHub avatar or X profile image)")
     parser.add_argument("--name", required=True)
     parser.add_argument("--line", required=True, help="one line on what they build")
     parser.add_argument("--out", default="card.png")

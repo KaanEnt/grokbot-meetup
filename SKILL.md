@@ -39,17 +39,30 @@ python3 -c "import PIL" 2>/dev/null || pip install pillow
 
 (`git clone https://github.com/KaanEnt/grokbot-meetup ~/grokbot-meetup` does the same.) The current version of this skill is always at https://raw.githubusercontent.com/KaanEnt/grokbot-meetup/main/SKILL.md. The scripts find their fonts and cover relative to their own folder, so run them from `~/grokbot-meetup/` or from this skill's folder when the files are already there.
 
-## Step 1: work out who this is, without asking
+## Step 1: work out who this is
 
-Do not open with questions. The account you run on already says who the person is. Read it first, in this order, and note the source of each fact:
+**First, the guest list.** Approved attendees can be looked up through a private endpoint that returns only two public-safe facts:
+
+```
+GET https://uxpxjkgvlekllavmsbgj.supabase.co/functions/v1/meetup-guest?email=<registration email>
+GET https://uxpxjkgvlekllavmsbgj.supabase.co/functions/v1/meetup-guest?name=<full name>
+```
+
+1. Find the person's Luma registration email on the account (profile, connected GitHub or X, a signed-in session) if it is visible. If not, ask once, in one short message: "What email or full name did you register for the meetup with?" That is the only question allowed before research.
+2. Call the lookup with `email=` first (case-insensitive exact match); use `name=` with the full name only when that is all you have. The answer is `{"match":true,"position":"...","linkedin":"..."}` or `{"match":false}`. `"reason":"ambiguous, use email"` means several guests share that name: ask for the email instead. Never guess between people and never paste the raw JSON back.
+3. On a match these are primary facts: `position` (how they described themselves at registration: Student, Founder, Developer/Engineer, and so on) and the `linkedin` URL, which goes in the sources. With the URL, read their public LinkedIn profile through web fetch or web search (the public page, or a search result for that URL): profile photo, headline or bio, and current role and company. Use the headline and current role as who they are, and let them shape the hook and the lens. Only use what is reachable without signing in. Never sign in to LinkedIn, never drive a signed-in LinkedIn session for this, and drop it quietly if the page is blocked.
+4. If the public profile photo URL can be downloaded, save it to a file and use it as the card and preview avatar in Step 4. Otherwise fall back to the GitHub avatar, then the X profile image.
+5. With no match, or if the lookup errors, carry on with the steps below exactly as before. Do not tell the person they were not found.
+
+**Then the account, without asking.** The account you run on already says who the person is. Read it in this order, and note the source of each fact:
 
 1. The account: the owner's name from the account profile. The connected GitHub, if there is one, gives the handle, bio and blog through your own-account call. The connected X account or X plugin gives the X handle the same way. If you can see the account's email, resolve GitHub from it as a fallback with `https://api.github.com/search/users?q=<email>+in:email`, then `https://api.github.com/search/commits?q=author-email:<email>`.
 2. The computer: `/workspace` and the home directory. Project folders, READMEs and `git remote -v` in each repo give the GitHub handle and what they are building. Browser sessions already signed in to GitHub, X or LinkedIn give the handles from the owner's own profile page; read nothing else there.
 3. The other Bots on this account: their names and descriptions say what the owner works on. What you remember from earlier chats with them counts too.
 
-Write four lines for yourself: name, GitHub handle, X handle, what they are building, each with its source. Then go straight to Step 2. Do not wait for confirmation.
+Write five lines for yourself: name, position and LinkedIn headline or current role, GitHub handle, X handle, what they are building, each with its source. Then go straight to Step 2. Do not wait for confirmation.
 
-Ask only for what is still missing after all three sources, in one message, and only when it blocks the post: a name you could not find anywhere, or nothing at all about what they build. A missing X handle does not block; use the register below as is. If the person already told you something in this chat, that beats anything you found.
+Ask only for what is still missing after all of this, in one message, and only when it blocks the post: a name you could not find anywhere, or nothing at all about what they build. A missing X handle does not block; use the register below as is. If the person already told you something in this chat, that beats anything you found, guest list included.
 
 ## Step 2: research, in this order
 
@@ -108,7 +121,7 @@ Read the draft as the person, aloud in your head. Score it 1 to 10 for "they cou
 
 ## Step 4: the card and the preview
 
-Every post gets one card, built with `make-card.py` from this skill's folder: the event cover on top, a black strip below with the person's picture in a circle, their name in white and their one line in grey, the way the Traction cards are laid out. The picture is their GitHub avatar (`avatar_url` from the users API) or their X profile image, saved to a file first; if the account owner keeps a brand picture on this computer (`CONTEXT.md` says where), use that for them. Name and line come from Step 1.
+Every post gets one card, built with `make-card.py` from this skill's folder: the event cover on top, a black strip below with the person's picture in a circle, their name in white and their one line in grey, the way the Traction cards are laid out. The picture is their public LinkedIn profile photo when Step 1 could download it, otherwise their GitHub avatar (`avatar_url` from the users API), otherwise their X profile image, saved to a file first; if the account owner keeps a brand picture on this computer (`CONTEXT.md` says where), use that for them. Name and line come from Step 1.
 
 ```
 python3 make-card.py --avatar <picture.png> --name "<Name>" --line "<one line on what they build>" --out card.png
