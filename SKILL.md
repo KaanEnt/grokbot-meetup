@@ -31,7 +31,7 @@ A copy of this Bot starts on a computer that has none of the files below. Before
 ```
 B=https://raw.githubusercontent.com/KaanEnt/grokbot-meetup/main
 mkdir -p ~/grokbot-meetup/assets && cd ~/grokbot-meetup
-for f in SKILL.md luma-event.py make-card.py make-preview.py assets/event-cover.png assets/Inter-Regular.ttf assets/Inter-SemiBold.ttf assets/Inter-OFL.txt; do
+for f in SKILL.md make-card.py make-preview.py assets/event-cover.png assets/Inter-Regular.ttf assets/Inter-SemiBold.ttf assets/Inter-OFL.txt; do
   curl -fsSL -o "$f" "$B/$f"
 done
 python3 -c "import PIL" 2>/dev/null || pip install pillow
@@ -41,18 +41,18 @@ python3 -c "import PIL" 2>/dev/null || pip install pillow
 
 ## Step 0: read the event page
 
-Before anything else, read the live Luma page. No sign-in needed:
+Before anything else, read the Luma event page live yourself. No script, no sign-in.
 
-```
-python3 luma-event.py https://luma.com/phs5tofz > event.json
-```
+1. Take the Luma link the person gave in the chat (any `luma.com/<slug>` or `lu.ma/<slug>` link). If they gave none, use `https://luma.com/phs5tofz`.
+2. Fetch it live with your own tools. First try Luma's public API: `curl -s "https://api.lu.ma/url?url=<slug>"` (or WebFetch on that URL). If that fails or is empty, fetch the event page itself and read the JSON in its `<script id="__NEXT_DATA__">` tag.
+3. Extract for yourself: the event name; start and end time, converted from UTC to the event's own timezone; the venue name and address; the description, agenda and any talks listed; the hosts, each with their LinkedIn, X and website links where listed; and the cover image URL (`cover_url`).
 
-It prints `name`, `start`, `end` (UTC), `timezone`, `venue`, `address`, `description` (the page text, agenda included), `hosts` (`name`, `linkedin`, `x`, `website`, `luma`) and `cover_url`. It reads Luma's public API (`https://api.lu.ma/url?url=<slug>`) and falls back to the JSON embedded in the event page.
+Then:
 
-1. The live Luma data overrides the Event block above wherever they differ: time, venue, hosts, agenda, talks. The Event block stays as the fallback when the script fails or a field is empty; then carry on with it and say nothing.
+1. The live Luma data overrides the Event block above wherever they differ: time, venue, hosts, agenda, talks. The Event block stays as the fallback when the fetch fails or a field is empty; then carry on with it and say nothing.
 2. If the person's name matches a host (ignore emoji and case), write the post as a host: what they are running or showing at the event, an invite to the room, and still their own personal take. Never a generic announcement, never the event's own copy.
 3. A matched host's own Luma links (LinkedIn, X, website) are identity sources for that person in Step 1 and Step 2, and go in the sources line.
-4. The hook comes from the Luma agenda and any talks listed in `description`. Never invent a talk, speaker, timing or detail that is not on the page or in the Event block.
+4. The hook comes only from the Luma page: the agenda and any talks in the description. Never invent a talk, speaker, timing or detail that is not on the page or in the Event block.
 5. If `assets/event-cover.png` is missing, download `cover_url` and use it as the cover for the card.
 
 Every other rule still holds: no mention of X in the post, no hashtags, no em dashes, no invented facts, and the guest lookup in Step 1 runs as before.
