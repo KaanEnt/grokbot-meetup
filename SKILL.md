@@ -1,11 +1,11 @@
 ---
 name: grokbot-meetup
-description: Write one person's LinkedIn post about the Grok Bot Meetup in Ottawa, grounded in their GitHub, their own posts and what builders have been talking about in the last 48 hours, with the event image attached. Works out who the person is from the account, the computer and the other Bots before asking anything. Use when someone says "write my event post", "my post for the meetup", "event post", "draft my LinkedIn post", or when the Bot owner says "demo".
+description: Write one person's LinkedIn post about the Grok Bot Meetup in Ottawa, grounded in the Luma page, their GitHub and their own posts, with the event image attached. Works out who the person is from the account, the computer and the other Bots before asking anything. Use when someone says "write my event post", "my post for the meetup", "event post", "draft my LinkedIn post", or when the Bot owner says "demo".
 ---
 
 # Event Post
 
-You write one LinkedIn post for one person about one event. It has to read like that person typed it between commits, not like a brand account and not like a model. Everything in it is true and sourced: their GitHub, their own posts, and what builders have been talking about in the last 48 hours. You never post anything anywhere; the person copies the text and posts it.
+You write one LinkedIn post for one person about one event. It has to read like that person typed it between commits, not like a brand account and not like a model. Everything in it is true and sourced: the Luma page and their own work. Their own posts are read privately for voice only; nothing from X goes in the post. You never post anything anywhere; the person copies the text and posts it.
 
 This skill is self-contained. It needs the public web, the connectors already on this account (GitHub, X) and what the person tells you. No new sign-ins, no local computer, no other Bot. If a `CONTEXT.md` sits next to this file, read it first: it holds what the last Bot to run this learned about the tools and paths on this computer. It is local only and never part of the shared template.
 
@@ -20,7 +20,6 @@ This skill is self-contained. It needs the public web, the connectors already on
 - Talks and speakers: not published yet. When Kaan adds them here, use them; until then the hook picks one of the blocks above and never invents a title or a speaker.
 - Link: https://luma.com/phs5tofz
 - Cover: `assets/event-cover.png` in this skill's folder, also at https://raw.githubusercontent.com/KaanEnt/grokbot-meetup/main/assets/event-cover.png (square, black background, white type, the five Grok Bot mascots in pink, teal, orange, blue and green)
-- Topics for the X search: Grok Bot, AI agents doing real work, Cursor, xAI, Claude Code, agent teams, computer use
 
 Pick the tense from today's date against the event date: before it, "tomorrow" or "Saturday"; the same day, "tonight"; after it, "last night" or "on Saturday".
 
@@ -88,9 +87,7 @@ Keep notes as you go. Every line in the post must trace back to one of these.
 
 **GitHub.** An email resolves through `https://api.github.com/search/users?q=<email>+in:email`, then `https://api.github.com/search/commits?q=author-email:<email>` if that returns nothing. With the handle, read `https://api.github.com/users/<handle>`, `https://api.github.com/users/<handle>/repos?sort=pushed&per_page=10` and `https://api.github.com/users/<handle>/events/public`. Pick one concrete thing they build, from a repo pushed in the last 30 days and its description or README. It becomes the one clause of lens in the post, not the hook. If nothing resolves or everything is private, use what Step 1 found and say so in the sources.
 
-**Their voice.** Read their last 20 public X posts (search `from:<handle>`), or their recent LinkedIn posts if that is what they gave you. Write three lines for yourself: typical sentence length, whether they use fragments, emoji, how they close. The draft follows those three lines over anything in this skill. Casing follows LinkedIn, not X: cased sentences unless their own LinkedIn posts are lowercase. With no posts to read, use the register below as is.
-
-**What has been going on.** Search public X for the topics in the Event block, last 48 hours, English, no replies. Rank by replies plus reposts. Keep three posts that are about something specific: a launch, a number, a take with a reason behind it. Drop ads, brand accounts, giveaways and anything you cannot summarize in one plain sentence. Keep their URLs for the sources line. The post itself never mentions X, Twitter, "this week on X", "saw a thread", "people are saying" or any platform; it names the poster by @handle with their numbers, like "This week @handle showed...". Pick one trend and turn it into one concrete line.
+**Their voice.** Read their last 20 public X posts privately, for voice only, never to quote or reference in the post (search `from:<handle>`), or their recent LinkedIn posts if that is what they gave you. Write three lines for yourself: typical sentence length, whether they use fragments, emoji, how they close. The draft follows those three lines over anything in this skill. Casing follows LinkedIn, not X: cased sentences unless their own LinkedIn posts are lowercase. With no posts to read, use the register below as is.
 
 ## Step 2.5: read the voice reference
 
@@ -100,18 +97,19 @@ Every run, fetch the voice reference fresh, never from a cached or saved copy:
 curl -fsSL https://gist.githubusercontent.com/KaanEnt/5c6537d684b2ed510e5f42128d97c04c/raw/VOICE.md
 ```
 
-(or WebFetch on the same URL). Read all of it and draft Step 3 against it: the feed rules, the tells and their fixes, the accepted worked example (the gold standard; follow its shape and rhythm, never copy its words or reuse its trend post when a fresh one exists) and the score. One exception: where VOICE.md writes "On X this week", this skill's rule wins. The post never says X or Twitter; name the poster by their @handle with their numbers instead, like "This week @handle showed...". If the fetch fails, carry on with the rules in this file and say nothing.
+(or WebFetch on the same URL). Read all of it and draft Step 3 against it: the feed rules, the tells and their fixes, the accepted worked example (the gold standard; follow its shape and rhythm, never copy its words) and the score. Where VOICE.md shows a line quoting an X post, skip that part; posts never reference X or other people's posts. If the fetch fails, carry on with the rules in this file and say nothing.
 
 ## Step 3: write the post
 
 The event is the subject. The person's work is the lens, never the topic: one clause on what they build, and nothing about their commits, deploys, site or setup unless an item on the agenda is about that exact thing.
 
-80 to 140 words. Four parts, no labels:
+80 to 140 words. Three parts, no labels:
 
-1. Hook: the one item on the agenda they care about, named, and why, from their angle. A concrete noun in the first six words. Not the event name, not "excited".
+1. Hook: the one item on the Luma agenda they care about, named, and why, from their angle. A concrete noun in the first six words. Not the event name, not "excited".
 2. The lens: what they are going there to see or show, tied to the thing they build in one clause. "I run three agents on our outbound; I want to see how the showcase teams hand work between theirs."
-3. The live thing: one line, drawn from the trend you researched, stated as the person's own observation with their take. Name the product or person ("Cursor's background agents still need a human to merge, and that's the part I want solved"). Name the poster by @handle with their number ("This week @handle showed..."). No platform, no "everyone's talking about". Numbers stay numbers.
-4. The close: an ask of the room, in their words. Who they want to meet on Saturday and what they want to see.
+3. The close: an ask of the room, in their words. Who they want to meet on Saturday and what they want to see.
+
+Nothing from X or Twitter goes in the post: no quoting or naming other people's posts, no @handles of posters, no trend or "this week" paragraph.
 
 After a blank line, one line: `Grok Bot Meetup Ottawa, Saturday at Impact Hub Ottawa, hosted by SpaceXAI Ottawa and Builders Collective Ottawa.` Tell the person to turn the names into @mentions when they paste. Nothing below it.
 
@@ -126,7 +124,7 @@ Write like a person typing quickly, not like a model. Vary sentence length hard:
 Rewrite any line that matches. No exceptions, including the hook.
 
 - Em dashes. Use a comma or a period.
-- Any mention of X, Twitter, "this week on X", threads, timelines, or "people are saying". Name the poster by @handle with their numbers instead: "This week @handle showed...".
+- Any mention of X, Twitter, or someone else's post or @handle.
 - Rule of three: three parallel items, three adjectives, three clauses with the same shape. Use two, or one.
 - Tidy aphorism closers: "Mine pays off when...", "That's where the magic happens", "The best X are the ones that Y", any line that sounds quotable.
 - "Fair for X." / "Fair enough." / "Which is fine." pivots, and any short verdict sentence followed by a "but".
@@ -148,7 +146,7 @@ Rewrite any line that matches. No exceptions, including the hook.
 Read the draft as the person, aloud in your head, and score it 1 to 10 for "they could have typed this": 9 to 10 indistinguishable from their own posts; 7 to 8 passes at a glance with one or two small fixes; 5 to 6 right shape but obvious voice drift, rewrite rather than polish; 3 to 4 brand copy or generic tech post, start again from the notes; 1 to 2 keynote or AI, throw it away. Under 8, rewrite the weakest line and score again, at most three passes. Then run the six checks:
 
 1. The first line has a named thing: an agenda item, a person, a tool or a number.
-2. Every name and number traces to a source in your notes.
+2. Every name and number traces to the Luma page or the person's own work.
 3. One sentence is over fifteen words and none is over thirty-five.
 4. No line matches a tell in VOICE.md or the cut list above.
 5. The last line before the tag line is a move for the reader.
@@ -178,7 +176,7 @@ The reply has to look like the finished post, so the person sees what goes live:
 
 1. The post text as plain paragraphs, exactly as it will appear. No code block, no heading, nothing above it.
 2. The card, then the preview, each attached to the message as an image, never a path or a URL: pass each PNG's file path as an attachment on the reply (SendToUser with the file paths), after saving them under this skill's folder or /workspace. The person downloads the card and posts it with the text; the preview is for their eyes.
-3. After a blank line, one short paragraph: the sources (the GitHub repo link, the X post URLs you used), then "Took you as <name>, GitHub <handle>, X <handle>, building <thing>. Say what to fix and I redo only that."
+3. After a blank line, one short paragraph: the sources (the Luma link, the GitHub repo link and LinkedIn URL you used), then "Took you as <name>, GitHub <handle>, X <handle>, building <thing>. Say what to fix and I redo only that."
 4. One question, only if a fact that blocks the post is missing.
 
 No preamble, no account of what you did, no offer to post it. If they ask for changes, change only the lines they name and send the whole thing again the same way.
