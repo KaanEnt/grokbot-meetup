@@ -90,7 +90,17 @@ Keep notes as you go. Every line in the post must trace back to one of these.
 
 **Their voice.** Read their last 20 public X posts (search `from:<handle>`), or their recent LinkedIn posts if that is what they gave you. Write three lines for yourself: typical sentence length, whether they use fragments, emoji, how they close. The draft follows those three lines over anything in this skill. Casing follows LinkedIn, not X: cased sentences unless their own LinkedIn posts are lowercase. With no posts to read, use the register below as is.
 
-**What has been going on.** Search public X for the topics in the Event block, last 48 hours, English, no replies. Rank by replies plus reposts. Keep three posts that are about something specific: a launch, a number, a take with a reason behind it. Drop ads, brand accounts, giveaways and anything you cannot summarize in one plain sentence. Keep their URLs for the sources line. This research only informs the post: the post itself never mentions X, Twitter, "this week on X", "saw a thread", "people are saying" or any platform. Pick one trend and turn it into one concrete line.
+**What has been going on.** Search public X for the topics in the Event block, last 48 hours, English, no replies. Rank by replies plus reposts. Keep three posts that are about something specific: a launch, a number, a take with a reason behind it. Drop ads, brand accounts, giveaways and anything you cannot summarize in one plain sentence. Keep their URLs for the sources line. The post itself never mentions X, Twitter, "this week on X", "saw a thread", "people are saying" or any platform; it names the poster by @handle with their numbers, like "This week @handle showed...". Pick one trend and turn it into one concrete line.
+
+## Step 2.5: read the voice reference
+
+Every run, fetch the voice reference fresh, never from a cached or saved copy:
+
+```
+curl -fsSL https://gist.githubusercontent.com/KaanEnt/5c6537d684b2ed510e5f42128d97c04c/raw/VOICE.md
+```
+
+(or WebFetch on the same URL). Read all of it and draft Step 3 against it: the feed rules, the tells and their fixes, the accepted worked example (the gold standard; follow its shape and rhythm, never copy its words or reuse its trend post when a fresh one exists) and the score. One exception: where VOICE.md writes "On X this week", this skill's rule wins. The post never says X or Twitter; name the poster by their @handle with their numbers instead, like "This week @handle showed...". If the fetch fails, carry on with the rules in this file and say nothing.
 
 ## Step 3: write the post
 
@@ -100,7 +110,7 @@ The event is the subject. The person's work is the lens, never the topic: one cl
 
 1. Hook: the one item on the agenda they care about, named, and why, from their angle. A concrete noun in the first six words. Not the event name, not "excited".
 2. The lens: what they are going there to see or show, tied to the thing they build in one clause. "I run three agents on our outbound; I want to see how the showcase teams hand work between theirs."
-3. The live thing: one line, drawn from the trend you researched, stated as the person's own observation with their take. Name the product or person ("Cursor's background agents still need a human to merge, and that's the part I want solved"). No platform, no "I saw", no "everyone's talking about". Numbers stay numbers.
+3. The live thing: one line, drawn from the trend you researched, stated as the person's own observation with their take. Name the product or person ("Cursor's background agents still need a human to merge, and that's the part I want solved"). Name the poster by @handle with their number ("This week @handle showed..."). No platform, no "everyone's talking about". Numbers stay numbers.
 4. The close: an ask of the room, in their words. Who they want to meet on Saturday and what they want to see.
 
 After a blank line, one line: `Grok Bot Meetup Ottawa, Saturday at Impact Hub Ottawa, hosted by SpaceXAI Ottawa and Builders Collective Ottawa.` Tell the person to turn the names into @mentions when they paste. Nothing below it.
@@ -116,7 +126,7 @@ Write like a person typing quickly, not like a model. Vary sentence length hard:
 Rewrite any line that matches. No exceptions, including the hook.
 
 - Em dashes. Use a comma or a period.
-- Any mention of X, Twitter, "this week on X", threads, timelines, or "people are saying".
+- Any mention of X, Twitter, "this week on X", threads, timelines, or "people are saying". Name the poster by @handle with their numbers instead: "This week @handle showed...".
 - Rule of three: three parallel items, three adjectives, three clauses with the same shape. Use two, or one.
 - Tidy aphorism closers: "Mine pays off when...", "That's where the magic happens", "The best X are the ones that Y", any line that sounds quotable.
 - "Fair for X." / "Fair enough." / "Which is fine." pivots, and any short verdict sentence followed by a "but".
@@ -133,9 +143,18 @@ Rewrite any line that matches. No exceptions, including the hook.
 - Any number, client, result or quote you did not read in a source. Ask instead of inventing.
 - Anything that could sit in anyone's post. If a line does not name a thing only this person could name, make it specific or cut it.
 
-### Self-check
+### Self-check, from VOICE.md
 
-Read the draft as the person, aloud in your head. Score it 1 to 10 for "they could have typed this". Under 8, rewrite the weakest line and score again, at most three times. Show the score only when asked.
+Read the draft as the person, aloud in your head, and score it 1 to 10 for "they could have typed this": 9 to 10 indistinguishable from their own posts; 7 to 8 passes at a glance with one or two small fixes; 5 to 6 right shape but obvious voice drift, rewrite rather than polish; 3 to 4 brand copy or generic tech post, start again from the notes; 1 to 2 keynote or AI, throw it away. Under 8, rewrite the weakest line and score again, at most three passes. Then run the six checks:
+
+1. The first line has a named thing: an agenda item, a person, a tool or a number.
+2. Every name and number traces to a source in your notes.
+3. One sentence is over fifteen words and none is over thirty-five.
+4. No line matches a tell in VOICE.md or the cut list above.
+5. The last line before the tag line is a move for the reader.
+6. Read it aloud. Anywhere it sounds like a keynote, flatten it.
+
+Show the score and checks only when asked.
 
 ## Step 4: the card and the preview
 
